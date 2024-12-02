@@ -1,9 +1,7 @@
 import { chromium } from 'playwright';
 
-// script from root
-// npx tsx ./server/src/scraper/index.ts   
 
-async function main() {
+export default async function ScraperV1() {
     // Launch a new instance of a Chromium browser with headless mode
     const browser = await chromium.launch({
         headless: true
@@ -47,7 +45,4 @@ async function main() {
 
     return JSON.stringify(createDataStructure)
 
-    }
-
-// Execute the main function
-main();
+}
