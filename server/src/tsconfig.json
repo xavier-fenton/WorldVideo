@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+
+    "module": "ES2022",
+    "moduleResolution": "Bundler",
+    "allowJs": true,
+    
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+
+    "noImplicitAny": true,
+    "allowUnusedLabels": false,
+    "allowUnreachableCode": false,
+
+    "skipLibCheck": true,
+  },
+  "include": [
+    "./scraper"
+  ],
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node"
+  },
+}
