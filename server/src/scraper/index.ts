@@ -43,6 +43,6 @@ export default async function ScraperV1() {
 
     
 
-    return JSON.stringify(createDataStructure)
+    return createDataStructure
 
 }
