@@ -4,6 +4,8 @@ import ScraperV1 from './scraper/index'
 
 export const server = express();
 
+
+
 // Add headers before the routes are defined
 server.use((req, res, next) => {
 
@@ -18,7 +20,8 @@ server.use((req, res, next) => {
   // Set to true if you need the website to include cookies in the requests sent
   // to the API (e.g. in case you use sessions)
   // res.setHeader('Access-Control-Allow-Credentials', 'true');
-
+  const logEntry = `${new Date().toISOString()} - ${req.method} ${req.url}\n`;
+  console.log("API HIT @: ",logEntry); // Log to console
   next();
 });
 
