@@ -16,7 +16,7 @@
     "skipLibCheck": true,
   },
   "include": [
-    "./scraper"
+    "middleware/scraper"
   ],
   "ts-node": {
     "esm": true,
