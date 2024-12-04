@@ -1,11 +1,15 @@
 'use client'
 import useSWR from 'swr'
 import dynamic from 'next/dynamic'
-import { Suspense } from 'react'
+import { Suspense, useRef } from 'react'
+import VideosPage from '@/components/videos/videos'
+import { Canvas } from '@react-three/fiber'
+import { Plane, useAspect, useTexture, useVideoTexture, OrbitControls, Html } from '@react-three/drei'
+import { DoubleSide } from 'three'
 
-const Logo = dynamic(() => import('@/components/canvas/Examples').then((mod) => mod.Logo), { ssr: false })
-const Dog = dynamic(() => import('@/components/canvas/Examples').then((mod) => mod.Dog), { ssr: false })
-const Duck = dynamic(() => import('@/components/canvas/Examples').then((mod) => mod.Duck), { ssr: false })
+
+// const Plane = dynamic(() => import('@/components/canvas/Examples').then((mod) => mod.Plane), {ssr: false})
+
 const View = dynamic(() => import('@/components/canvas/View').then((mod) => mod.View), {
   ssr: false,
   loading: () => (
@@ -38,47 +42,77 @@ const Loading = () => {
   )
 }
 
+function Scene() {
+  const size = useAspect(1800, 1000)
+  return (
+    <mesh scale={size}>
+      <planeGeometry />
+      <Suspense fallback={<FallbackMaterial url="testimage.jpg" />}>
+        <VideoMaterial url="test.mp4" />
+      </Suspense>
+    </mesh>
+  )
+}
+
+function YouTubePlane() {
+  const iframeRef = useRef();
+
+  return (
+    <mesh>
+      {/* Create a Plane Geometry */}
+      <planeGeometry args={[3, 2]} />
+      <meshBasicMaterial color="black" side={DoubleSide}/>
+      {/* Use Html to embed the iframe */}
+      <Html
+        
+        transform
+        occlude
+        position={[0, 0, 0.01]} // Slight offset to avoid z-fighting
+      >
+        <iframe
+          ref={iframeRef}
+          src="https://www.youtube.com/embed/FEEF5wdGFKk"
+          width="300"
+          height="200"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+        />
+      </Html>
+    </mesh>
+  );
+}
+
+function VideoMaterial({ url }) {
+  const texture = useVideoTexture(url)
+  return <meshBasicMaterial side={DoubleSide} map={texture} toneMapped={false} />
+}
+
+function FallbackMaterial({ url }) {
+  const texture = useTexture(url)
+  return <meshBasicMaterial map={texture} toneMapped={false} />
+}
+
 
 export default function Page() {
   
-  const fetcher = (...args) => fetch(args).then(res => res.json())
 
-  const { data, error, isLoading } = useSWR('http://localhost:8080/v1/scrape', fetcher)
-  
-  
-  if (error) return <div>failed to load</div>
-  
   
   // render data
   return (
     <>
     <div>WorldVideoV1</div>
-    {isLoading ? <Loading /> :
+    <div className='size-full'>
+          <Canvas>
+            <Plane >
+              <Suspense fallback={<FallbackMaterial url="testimage.jpg" />}>
+                <YouTubePlane />
+              </Suspense>
+            </Plane>
+            <OrbitControls />
 
-    <div>
-        {data ? <div className='grid grid-cols-4 gap-[5px]'> {data.map((video: {id: number, videoSrc: string}) => {
-
-            if(video.videoSrc.match('/shorts'))
-            {
-              video.videoSrc = video.videoSrc.replace('/shorts', '/embed')
-            } 
-            else if(video.videoSrc.includes('/watch?v='))
-            {        
-              video.videoSrc = video.videoSrc.replace('/watch?v=', '/embed/')
-            }
-          
-              return (
-                <div key={video.id}>
-                  <iframe className='size-full' src={`https://www.youtube.com${video.videoSrc}`}></iframe>
-                </div>
-              )
-          
-          })}
-        </div> : <div>Nothing to present</div>
-        }
-     </div>
-     
-     }
+          </Canvas>
+        </div>
     </>
   )
 }
+
