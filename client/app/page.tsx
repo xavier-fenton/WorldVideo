@@ -43,7 +43,7 @@ const Loading = () => {
 }
 
 function Scene() {
-  const size = useAspect(1800, 1000)
+  const size = useAspect(1800 / 4, 1000 / 4)
   return (
     <mesh scale={size}>
       <planeGeometry />
@@ -59,21 +59,17 @@ function YouTubePlane() {
 
   return (
     <mesh>
-      {/* Create a Plane Geometry */}
-      <planeGeometry args={[3, 2]} />
-      <meshBasicMaterial color="black" side={DoubleSide}/>
-      {/* Use Html to embed the iframe */}
       <Html
-        
+        scale={[0.5, 0.5, 0.5]}
         transform
         occlude
-        position={[0, 0, 0.01]} // Slight offset to avoid z-fighting
+        position={[0, 0, 0.1]} // Slight offset to avoid z-fighting
       >
         <iframe
           ref={iframeRef}
           src="https://www.youtube.com/embed/FEEF5wdGFKk"
-          width="300"
-          height="200"
+          width="250"
+          height="auto"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
         />
@@ -103,11 +99,9 @@ export default function Page() {
     <div>WorldVideoV1</div>
     <div className='size-full'>
           <Canvas>
-            <Plane >
-              <Suspense fallback={<FallbackMaterial url="testimage.jpg" />}>
+              <Suspense fallback={null}>
                 <YouTubePlane />
               </Suspense>
-            </Plane>
             <OrbitControls />
 
           </Canvas>
