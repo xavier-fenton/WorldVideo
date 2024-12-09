@@ -1,6 +1,7 @@
 import { Html } from '@react-three/drei';
 import { tree } from 'next/dist/build/templates/app-page';
 import React, { useEffect, useRef, useState } from 'react';
+import useSWR from 'swr';
 
 
 type videoType = {
@@ -39,7 +40,11 @@ const boxIntersect = (
 const VideoCluster: React.FC<videoProps> = ({boundary, count}) => {
     const iframeRef = useRef();
     const [videos, setVideos] = useState<videoType[]>([])
+    const fetcher = (...args) => fetch(args).then(res => res.json())
 
+    const { data, error, isLoading } = useSWR('http://localhost:8080/v1/scrape', fetcher, {revalidateIfStale: false,
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false})
     const isOverlapping = (index: number, video: any, videos: any[]) => {
 
     const minTargetX = video.position.x  -  video.box  / 2;
@@ -127,10 +132,32 @@ const VideoCluster: React.FC<videoProps> = ({boundary, count}) => {
                 return(
                 <object3D key={index} position={[video.position.x, video.position.y, video.position.z]}>
                     <instancedMesh>
-                        {/* <mesh scale={[video.box, video.box, video.box ]}>
-                            <boxGeometry/>
-                            <meshBasicMaterial color={"blue"} wireframe/>
-                        </mesh> */}
+                        {data ? data.map((video: {id: number, videoSrc: string}) => {
+                                                    
+                                if(video.videoSrc.match('/shorts'))
+                                {
+                                    video.videoSrc = video.videoSrc.replace('/shorts', '/embed')
+                                } 
+                                else if(video.videoSrc.includes('/watch?v='))
+                                {        
+                                    video.videoSrc = video.videoSrc.replace('/watch?v=', '/embed/')
+                                }
+
+                            return (
+                                <Html
+                                key={video.id}
+                                scale={[2, 2, 2]}
+                                transform
+                                occlude
+                                >
+                                    <div key={video.id}>
+                                        <iframe loading="lazy" className='size-full' src={`https://www.youtube.com${video.videoSrc}`}></iframe>
+                                    </div>
+                                </Html>
+                                
+                            )
+                            
+                        }) : 
                         <Html
                             scale={[2, 2, 2]}
                             transform
@@ -145,13 +172,15 @@ const VideoCluster: React.FC<videoProps> = ({boundary, count}) => {
                                 allowFullScreen
                                 />
                         </Html>
-                       
+                        }
+                        
                         </instancedMesh>
                     </object3D>
                 )
             })}
             
-        </group>)
+        </group>
+        )
 };
 
 export default VideoCluster;

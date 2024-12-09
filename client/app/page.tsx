@@ -3,7 +3,7 @@ import dynamic from 'next/dynamic'
 import VideosPage from '@/components/videos/videos'
 import { Canvas, useFrame} from '@react-three/fiber'
 import { Plane, useAspect, useTexture, useVideoTexture, OrbitControls, Html, Instance, Bvh } from '@react-three/drei'
-import { BoxGeometry, Color, DoubleSide, Group, MathUtils, Mesh, MeshLambertMaterial } from 'three'
+import { BoxGeometry, Camera, Color, DoubleSide, Group, MathUtils, Mesh, MeshLambertMaterial } from 'three'
 import { useEffect, useRef } from 'react'
 import VideoCluster from '@/components/videos/videoCluster'
 // import { Dog } from '@/components/canvas/Examples'
@@ -94,6 +94,7 @@ export default function Page() {
     <div>WorldVideoV1</div>
     <div className='size-full'>
           <Canvas>
+              
               <VideoCluster boundary={100} count={10}/>
               <OrbitControls />
           </Canvas>
