@@ -1,6 +1,8 @@
 'use client'
 import useSWR from 'swr'
 import dynamic from 'next/dynamic'
+// import LiteYouTubeEmbed from 'react-lite-youtube-embed';
+import { LiteYoutubeEmbed } from 'react-lite-yt-embed';
 
 const Loading = () => {
   return (
@@ -36,22 +38,35 @@ export default function VideosPage() {
     <div>WorldVideoV1</div>
     {isLoading ? <Loading /> :
 
-    <div>
-        {data ? <div className='grid grid-cols-4 gap-[5px]'> {data.map((video: {id: number, videoSrc: string}) => {
-
-            if(video.videoSrc.match('/shorts'))
-            {
-              video.videoSrc = video.videoSrc.replace('/shorts', '/embed')
-            } 
-            else if(video.videoSrc.includes('/watch?v='))
-            {        
-              video.videoSrc = video.videoSrc.replace('/watch?v=', '/embed/')
-            }
+    <div className='h-dvh'>
+        {data ? <div className='h-full grid grid-cols-4 gap-[5px]'> {data.map((video: {id: number, videoSrc: string}) => {
+            // Original slice
+            // if(video.videoSrc.match('/shorts'))
+            // {
+            //   video.videoSrc = video.videoSrc.replace('/shorts', '/embed')
+            // } 
+            // else if(video.videoSrc.includes('/watch?v='))
+            // {        
+            //   video.videoSrc = video.videoSrc.replace('/watch?v=', '/embed/')
+            // }
+            if(video.videoSrc.match('/shorts/'))
+              {
+                  video.videoSrc = video.videoSrc.replace('/shorts/', '')
+              } 
+              else if(video.videoSrc.includes('/watch?v='))
+              {        
+                  video.videoSrc = video.videoSrc.replace('/watch?v=', '')
+              }
+              else if(video.videoSrc.includes('/'))
+                  {        
+                      video.videoSrc = video.videoSrc.replace('/', '')
+                  }
+              console.log(video);
           
               return (
-                <div key={video.id}>
-                  <iframe loading="lazy" className='size-full' src={`https://www.youtube.com${video.videoSrc}`}></iframe>
-                </div>
+                <>
+                  <LiteYoutubeEmbed id={video.videoSrc} />
+                </>
               )
           
           })} </div> 

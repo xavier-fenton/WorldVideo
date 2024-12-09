@@ -1,11 +1,13 @@
 'use client'
 import dynamic from 'next/dynamic'
 import VideosPage from '@/components/videos/videos'
-import { Canvas, useFrame} from '@react-three/fiber'
+import { Canvas, useFrame, useThree} from '@react-three/fiber'
 import { Plane, useAspect, useTexture, useVideoTexture, OrbitControls, Html, Instance, Bvh } from '@react-three/drei'
 import { BoxGeometry, Camera, Color, DoubleSide, Group, MathUtils, Mesh, MeshLambertMaterial } from 'three'
 import { useEffect, useRef } from 'react'
 import VideoCluster from '@/components/videos/videoCluster'
+import { LiteYoutubeEmbed } from 'react-lite-yt-embed';
+
 // import { Dog } from '@/components/canvas/Examples'
 
 
@@ -68,14 +70,18 @@ function YouTubePlane() {
           occlude
           position={[0, 0, 0.1]} // Slight offset to avoid z-fighting
         >
-            <iframe
+        <div style={{ width: "400px", height: "100px" }}> 
+          hello
+        <LiteYoutubeEmbed id='FEEF5wdGFKk'/>
+        </div> 
+            {/* <iframe
               ref={iframeRef}
               src="https://www.youtube.com/embed/FEEF5wdGFKk"
               width="250"
               height="auto"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
-            />
+            /> */}
         </Html>
       </instancedMesh>
     </group>
@@ -85,19 +91,19 @@ function YouTubePlane() {
 
 
 
-
 export default function Page() {
-  
-  
+
   return (
     <>
     <div>WorldVideoV1</div>
     <div className='size-full'>
-          <Canvas>
+          <Canvas camera={{position: [-6,20,160]}}>
               
               <VideoCluster boundary={100} count={10}/>
+              {/* <YouTubePlane/> */}
               <OrbitControls />
           </Canvas>
+          {/* <VideosPage/> */}
         </div>
     </>
   )
