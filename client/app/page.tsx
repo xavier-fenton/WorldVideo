@@ -99,7 +99,7 @@ export default function Page() {
     <div className='size-full'>
           <Canvas camera={{position: [-6,20,160]}}>
               
-              <VideoCluster boundary={100} count={10}/>
+              <VideoCluster boundary={100} count={80}/>
               {/* <YouTubePlane/> */}
               <OrbitControls />
           </Canvas>

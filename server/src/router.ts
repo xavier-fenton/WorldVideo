@@ -61,7 +61,7 @@ export const scrapeController: RequestHandler = async (req, res) => {
         const logEntry = `${new Date().toISOString()} - ${req.method} ${req.url}\n`;
         console.log("API HIT @: ",logEntry); // Log to console
   
-        const data = await scrapeApi(10);
+        const data = await scrapeApi(80);
         scrapeCache.set("scrape-data", data);
         
         
