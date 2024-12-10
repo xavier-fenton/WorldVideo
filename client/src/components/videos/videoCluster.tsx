@@ -22,16 +22,12 @@ type ytVideoData = {
 const boxIntersect = (
     minAx: number,
     minAz: number,
-    minAy: number,
     maxAx: number,
     maxAz: number,
-    maxAy: number,
     minBx: number,
     minBz: number,
-    minBy: number,
     maxBx: number,
     maxBz: number,
-    maxBy: number,
 
 ) => {
     let aLeftofB = maxAx < minBx;
@@ -61,9 +57,7 @@ const VideoCluster: React.FC<videoProps> = ({ boundary, count }) => {
         const maxTargetX = video.position.x + video.box / 2;
         const minTargetZ = video.position.z - video.box / 2;
         const maxTargetZ = video.position.z + video.box / 2;
-        const minTargetY = video.position.y - video.box / 2;
-        const maxTargetY = video.position.y + video.box / 2;
-
+      
 
 
         for (let i = 0; i < index; i++) {
@@ -71,24 +65,18 @@ const VideoCluster: React.FC<videoProps> = ({ boundary, count }) => {
             let maxChildX = videos[i].position.x + videos[i].box / 2;
             let minChildZ = videos[i].position.z - videos[i].box / 2;
             let maxChildZ = videos[i].position.z + videos[i].box / 2;
-            let minChildY = videos[i].position.y - videos[i].box / 2;
-            let maxChildY = videos[i].position.y + videos[i].box / 2;
-
+        
 
             if (
                 boxIntersect(
                     minTargetX,
                     minTargetZ,
-                    minTargetY,
                     maxTargetX,
                     maxTargetZ,
-                    maxTargetY,
                     minChildX,
                     minChildZ,
-                    minChildY,
                     maxChildX,
                     maxChildZ,
-                    maxChildY
                 )
             ) {
                 console.log("Content box overlapping: ", video);
@@ -131,11 +119,12 @@ const VideoCluster: React.FC<videoProps> = ({ boundary, count }) => {
         for (let i = 0; i < count; i++) {
             tempVideos.push({ position: { x: 0, z: 0, y: 0 }, box: 10 })
         }
+
         updatePosition(tempVideos, boundary)
 
         if (data) {
+
             const cleanData: ytVideoData[] = data.map((video: { id: number, videoSrc: string }, i: number) => {
-                console.log(video.videoSrc, i);
 
                 if (video.videoSrc.match('/shorts/')) {
                     video.videoSrc = video.videoSrc.replace('/shorts/', '')
@@ -148,66 +137,34 @@ const VideoCluster: React.FC<videoProps> = ({ boundary, count }) => {
                 }
                 return video
             })
+
             setYtData(cleanData)
         };
 
     }, [boundary, count, data])
 
-    function Videos() {
-        return (
-            <>
-                {ytData.length > 0 ? ytData.map((video: ytVideoData) => {
-                    console.log(video);
 
-                    return (
+    return (
+        <group>
+            <Html position={[0, 65, 0]}>
+                <div className='rounded-lg border p-[10px] text-xs'>Trending</div>
+            </Html>
+            {videos.map((video, index) => (
+                <object3D key={index} position={[video.position.x, video.position.y, video.position.z]}>
+                    {ytData[index] && ( // Ensure there's a matching YouTube video for this position
                         <Html
-                            key={video.id}
+                            key={ytData[index].id}
                             scale={[1, 1, 1]}
                             transform
                             occlude
                         >
-
-                            <div key={video.id} style={{ width: "400px", height: "100px" }}>
-                                <LiteYoutubeEmbed lazyImage={false} key={video.id} id={video.videoSrc} />
+                            <div style={{ width: "400px", height: "100px" }}>
+                                <LiteYoutubeEmbed lazyImage={false} id={ytData[index].videoSrc} />
                             </div>
-
                         </Html>
-                    )
-
-                }) : <Html><div>No videos</div></Html>}
-            </>
-        )
-    }
-
-    return (
-        <group>
-            <Html position={[0, 65, 0]}><div className='rounded-lg border p-[10px] text-xs font-arial'>Trending</div></Html>
-            {videos.map((video, index) => {
-                return (
-                    <object3D key={index} position={[video.position.x, video.position.y, video.position.z]}>
-                        <instancedMesh>
-                        <Html
-                                            key={index}
-                                            scale={[1, 1, 1]}
-                                            transform
-                                            occlude
-                                        >
-
-                                {ytData.length && ytData.map((video: ytVideoData) => {
-
-                                    return (
-                                            <div key={video.id} style={{ width: "400px", height: "100px" }}>
-                                                <LiteYoutubeEmbed lazyImage={false} key={video.id - index} id={video.videoSrc} />
-                                            </div>
-                                    )
-
-                                })}
-                            </Html>
-                        </instancedMesh>
-                    </object3D>
-                )
-            })}
-
+                    )}
+                </object3D>
+            ))}
         </group>
     )
 };
